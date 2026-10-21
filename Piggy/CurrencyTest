@@ -1,0 +1,48 @@
+- ============================================================
+-- AUTO-FARM PIGGY CARNIVAL (NOTHING HUB STYLE - V12 FINAL)
+-- ============================================================
+getgenv().Webhook = getgenv().Webhook or getgenv().Webhoob or ""
+_G.AutoFarmEnabled = true
+_G.RunningSpeedrun = false
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
+local CoreGui = game:GetService("CoreGui")
+local LocalPlayer = Players.LocalPlayer
+-- ------------------------------------------------------------
+-- 0. SETTINGS & SERVER CHECK
+-- ------------------------------------------------------------
+if #Players:GetPlayers() > 1 then
+    LocalPlayer:Kick("join a private server to use currency farm")
+    return
+end
+Players.PlayerAdded:Connect(function(plr)
+    if plr ~= LocalPlayer then
+        LocalPlayer:Kick("join a private server to use currency farm")
+    end
+end)
+local pgui = LocalPlayer:WaitForChild("PlayerGui")
+local mainMenuGui = pgui:WaitForChild("MainMenu")
+local titleMenu = mainMenuGui:WaitForChild("Title")
+local settingsMenu = titleMenu:WaitForChild("SettingsMenu")
+local settingsRemote = settingsMenu:WaitForChild("SettingsRemote")
+settingsRemote:InvokeServer("UpdateInfo", {
+    StreamerMode = false,
+    RandomTrap = false,
+    HardMode = true,
+    Graphics = false,
+    RandomAbility = false,
+    ColorMode = false,
+    Friendly = true,
+    RandomSkin = false
+})
+local currencyValue = LocalPlayer:WaitForChild("Data"):WaitForChild("PlayerData"):WaitForChild("Currency")
+-- Variables de Session et de temps
+local sessionStartTime = os.time()
+local runStartTime = os.time()
+local initialCurrency = currencyValue.Value
+local runStartCurrency = initialCurrency
+local gamesPlayed = 0
+local currentStatus = "Initializing..."
+local lastRunTimeStr = "0m 0s"
